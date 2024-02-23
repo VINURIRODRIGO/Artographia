@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "85010899908",
+    "project_id": "artographia-fyp",
+    "storage_bucket": "artographia-fyp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85010899908:android:13605be51796a2b35bba91",
+        "android_client_info": {
+          "package_name": "com.example.artographia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-9FiaDba7JiEy0uUGxJyYXTsLu3s3QMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

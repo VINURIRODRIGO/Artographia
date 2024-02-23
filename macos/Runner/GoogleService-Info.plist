@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCpUr0E4K9I0K0zST9sY7fpo8YVlfbIgPc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>85010899908</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.artographia.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>artographia-fyp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>artographia-fyp.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:85010899908:ios:b5e59ff5a269ed465bba91</string>
+</dict>
+</plist>
