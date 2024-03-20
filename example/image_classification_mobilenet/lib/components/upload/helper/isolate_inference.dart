@@ -28,7 +28,6 @@ class IsolateInference {
   Future<void> close() async {
     _isolate.kill();
     _receivePort.close();
-    logger.d("Yep I just closed it");
   }
 
  static void entryPoint(SendPort sendPort) async {

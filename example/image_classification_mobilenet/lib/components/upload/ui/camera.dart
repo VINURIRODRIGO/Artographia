@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-
 import '../helper/image_classification_helper.dart';
+
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({
@@ -28,6 +28,13 @@ class CameraScreenState extends State<CameraScreen>
   bool showButtons = false;
   Logger logger = Logger();
   SelectedButton selectedButton = SelectedButton.none;
+  var modelAnswer = "";
+  var userAnswer = "";
+  var feedback = "Wrong";
+  List<Widget> contentWidgets = [];
+  bool isLoading = false;
+  bool isHealthyButtonSelected = false;
+  bool isPatientButtonSelected = false;
 
   initCamera() {
     cameraController = CameraController(widget.camera, ResolutionPreset.medium,
@@ -119,52 +126,245 @@ class CameraScreenState extends State<CameraScreen>
       child: SingleChildScrollView(
         child: Column(
           children: [
-            if (showButtons) // Show buttons only when showButtons is true
+            if (showButtons)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
                     onPressed: () async {
-                      if (classification != null) {
-                        var sortedResults = (classification!.entries.toList()
-                              ..sort((a, b) => a.value.compareTo(b.value)))
-                            .reversed
-                            .take(3)
-                            .toList();
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text("Prediction Results"),
-                              content: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: sortedResults.map((e) {
+                      logger.d(isLoading);
+                      if (!isPatientButtonSelected) {
+                        isHealthyButtonSelected = true;
+                        if (classification != null) {
+                          var sortedResults = (classification!.entries.toList()
+                                ..sort((a, b) => a.value.compareTo(b.value)))
+                              .reversed
+                              .take(3)
+                              .toList();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              List<Widget> contentWidgets = [];
+                              userAnswer = "Healthy";
+                              feedback = userAnswer == sortedResults.first.key
+                                  ? "Correct"
+                                  : "Wrong";
+                              modelAnswer = sortedResults.first.key;
+                              if (userAnswer != "") {
+                                contentWidgets.add(
+                                  Text(
+                                    "$feedback Answer. This is a $modelAnswer's drawing",
+                                    style: TextStyle(
+                                      color: feedback == "Correct"
+                                          ? Colors.green
+                                          : Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              contentWidgets.addAll(
+                                sortedResults.map((e) {
                                   var percentage =
                                       (e.value * 100).toStringAsFixed(0);
                                   return Text("${e.key}: $percentage%");
-                                }).toList(),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Close'),
+                                }),
+                              );
+
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                title: const Text(
+                                  "Prediction Results",
+                                  style: TextStyle(color: Colors.black),
                                 ),
-                              ],
-                            );
-                          },
-                        );
+                                content: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: contentWidgets,
+                                ),
+                                actions: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          isPatientButtonSelected = false;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red),
+                                        child: const SizedBox(
+                                          width: 60,
+                                          child: Text(
+                                            'Report',
+                                            textAlign: TextAlign.center,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 15),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          isPatientButtonSelected = false;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green),
+                                        child: const SizedBox(
+                                          width: 60,
+                                          child: Text(
+                                            'Close',
+                                            textAlign: TextAlign.center,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
                       }
                     },
-                    child: const Text('Healthy'),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color>((states) {
+                        if (isHealthyButtonSelected == true &&
+                            isPatientButtonSelected == false) {
+                          return Colors.blue;
+                        } else {
+                          return Colors.grey.withOpacity(0.5);
+                        }
+                      }),
+                    ),
+                    child: const Text(
+                      'Healthy',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      // Handle Patient button press
+                    onPressed: () async {
+                      logger.d(isLoading);
+                      if (!isHealthyButtonSelected) {
+                        isPatientButtonSelected = true;
+                        if (classification != null) {
+                          var sortedResults = (classification!.entries.toList()
+                                ..sort((a, b) => a.value.compareTo(b.value)))
+                              .reversed
+                              .take(3)
+                              .toList();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              List<Widget> contentWidgets = [];
+                              userAnswer = "Patient";
+                              feedback = userAnswer == sortedResults.first.key
+                                  ? "Correct"
+                                  : "Wrong";
+                              modelAnswer = sortedResults.first.key;
+                              if (userAnswer != "") {
+                                contentWidgets.add(
+                                  Text(
+                                    "$feedback Answer. This is a $modelAnswer's drawing",
+                                    style: TextStyle(
+                                      color: feedback == "Correct"
+                                          ? Colors.green
+                                          : Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              contentWidgets.addAll(
+                                sortedResults.map((e) {
+                                  var percentage =
+                                      (e.value * 100).toStringAsFixed(0);
+                                  return Text("${e.key}: $percentage%");
+                                }),
+                              );
+
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                title: const Text(
+                                  "Prediction Results",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                content: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: contentWidgets,
+                                ),
+                                actions: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          isPatientButtonSelected = false;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.red),
+                                        child: const SizedBox(
+                                          width: 60,
+                                          child: Text(
+                                            'Report',
+                                            textAlign: TextAlign.center,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 15),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          isPatientButtonSelected = false;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green),
+                                        child: const SizedBox(
+                                          width: 60,
+                                          child: Text(
+                                            'Close',
+                                            textAlign: TextAlign.center,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      }
                     },
-                    child: const Text('Patient'),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color>((states) {
+                        if (isPatientButtonSelected == true &&
+                            isHealthyButtonSelected == false) {
+                          return Colors.blue;
+                        } else {
+                          return Colors.grey.withOpacity(0.5);
+                        }
+                      }),
+                    ),
+                    child: const Text(
+                      'Patient',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
