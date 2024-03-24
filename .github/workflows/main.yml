@@ -16,6 +16,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      # 4. Navigate to the directory containing main.dart
+      - name: Navigate to Example Directory
+        run: cd example/image_classification_mobilenet
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -23,10 +26,10 @@ jobs:
           flutter-version: "3.19.1" # You can adjust the Flutter version here
 
       - name: Install dependencies
-        run: cd example/image_classification_mobilenet && flutter pub get
+        run: flutter pub get
 
       - name: Run tests
-        run: cd example/image_classification_mobilenet && flutter run
+        run: flutter run
 
       # - name: Build Android APK
       #   run: flutter build apk
