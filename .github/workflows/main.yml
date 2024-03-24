@@ -1,78 +1,23 @@
-name: Build & Release
+build-job:
+  stage: build
+  script:
+    - echo "Hello, $GITLAB_USER_LOGIN!"
 
-on:
-  pull_request:
-    branches:
-      - dev
+test-job1:
+  stage: test
+  script:
+    - echo "This job tests something"
 
-  push:
-    branches:
-      - dev
+test-job2:
+  stage: test
+  script:
+    - echo "This job tests something, but takes more time than test-job1."
+    - echo "After the echo commands complete, it runs the sleep command for 20 seconds"
+    - echo "which simulates a test that runs 20 seconds longer than test-job1"
+    - sleep 20
 
-jobs:
-  build:
-    name: Build & Release
-    runs-on: macos-latest
-
-    steps:
-      # 1. Checkout repository
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      # 2. Set up Java
-      - name: Set Up Java
-        uses: actions/setup-java@v3.12.0
-        with:
-          distribution: "oracle"
-          java-version: "20.0.2"
-
-      # 3. Set up Flutter
-      - name: Set Up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.19.1"
-          channel: "stable"
-
-      # 4. Navigate to the directory containing main.dart
-      - name: Navigate to Example Directory
-        run: cd example/image_classification_mobilenet
-
-      # 5. Install dependencies
-      - name: Install Dependencies
-        run: flutter pub get
-
-      # 6. Build APK
-      - name: Build APK
-        run: flutter build apk --release
-
-      # 7. Build appBundle
-      - name: Build appBundle
-        run: flutter build appbundle
-
-      # 8. Build IPA
-      - name: Build IPA
-        run: flutter build ipa --no-codesign
-
-      # 9. Compress Archives and IPAs
-      - name: Compress Archives and IPAs
-        run: |
-          cd build
-          tar -czf ios_build.tar.gz ios
-
-      # 10. Upload Artifacts
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Releases
-          path: |
-            example/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk
-            example/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab
-            example/image_classification_mobilenet/build/ios_build.tar.gz
-
-      # 11. Create Release
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "example/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk,example/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab,example/image_classification_mobilenet/build/ios_build.tar.gz"
-          tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.TOKEN }}
+deploy-prod:
+  stage: deploy
+  script:
+    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
+  environment: production
