@@ -11,7 +11,6 @@ on:
       - dev
       # - test
 
-
 jobs:
   build:
     name: Build & Release
@@ -21,7 +20,7 @@ jobs:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       - uses: subosito/flutter-action@48cafc24713cca54bbe03cdc3a423187d413aafa
         with:
-          channel: 'stable'
+          channel: "stable"
           cache: true
           cache-key: flutter-:os:-:channel:-:version:-:arch:-
 
@@ -36,8 +35,8 @@ jobs:
 
       - name: Flutter Analyze project source
         run: flutter analyze .
-    steps:
-        #1 Checkout repository
+      # steps:
+      #1 Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -45,15 +44,15 @@ jobs:
       - name: Set Up Java
         uses: actions/setup-java@v3.12.0
         with:
-          distribution: 'oracle'
-          java-version: '20.0.2'
+          distribution: "oracle"
+          java-version: "20.0.2"
 
         #3 setup Flutter
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.1'
-          channel: 'stable'
+          flutter-version: "3.19.1"
+          channel: "stable"
 
         #4 install dependencies
       - name: Install Dependencies
@@ -73,8 +72,7 @@ jobs:
 
         #8 build ipa
       - name: Build IPA
-        run:
-          flutter build ipa --no-codesign
+        run: flutter build ipa --no-codesign
       - name: Compress Archives and IPAs
         run: |
           cd build
@@ -90,7 +88,7 @@ jobs:
             build/app/outputs/bundle/release/app-release.aab
             build/ios_build.tar.gz
 
-        #10 create release with those builds 
+        #10 create release with those builds
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
