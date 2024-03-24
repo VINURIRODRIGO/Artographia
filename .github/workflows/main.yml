@@ -38,9 +38,16 @@ jobs:
       #   run: flutter build ios
       #   # Note: For iOS builds, you may need to set up additional configurations like signing.
 
-      # - name: Archive artifacts
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: build
-      #     path: |
-      #       build/
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: |
+            examples/image_classification_mobilenet/build/
+      # 11. Create Release
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "examples/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk,examples/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab,examples/image_classification_mobilenet/build/ios_build.tar.gz"
+          tag: v1.0.${{ github.run_number }}
+          token: ${{ secrets.TOKEN }}
