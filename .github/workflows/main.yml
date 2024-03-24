@@ -60,14 +60,14 @@ jobs:
       #     tar -czf ios_build.tar.gz ios
 
       # 10. Upload Artifacts
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Releases
-          path: |
-            example/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk
-            example/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab
-            example/image_classification_mobilenet/build/ios_build.tar.gz
+      # - name: Upload Artifacts
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: Releases
+      #     path: |
+      #       example/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk
+      #       example/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab
+      #       example/image_classification_mobilenet/build/ios_build.tar.gz
 
       # 11. Create Release
       - name: Create Release
