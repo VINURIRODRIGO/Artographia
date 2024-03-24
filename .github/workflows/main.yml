@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Build & Release
-    runs-on: macos-latest
+    #runs-on: macos-latest
 
     steps:
       #1 Checkout repository
