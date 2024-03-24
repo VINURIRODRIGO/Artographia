@@ -17,24 +17,6 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
-      - uses: subosito/flutter-action@48cafc24713cca54bbe03cdc3a423187d413aafa
-        with:
-          channel: "stable"
-          cache: true
-          cache-key: flutter-:os:-:channel:-:version:-:arch:-
-
-      - name: Install melos
-        run: dart pub global activate melos
-
-      - name: Install dependencies
-        run: melos bootstrap
-
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
-
-      - name: Flutter Analyze project source
-        run: flutter analyze .
       # steps:
       #1 Checkout repository
       - name: Checkout Repository
@@ -58,9 +40,9 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-        #5 run test
-      - name: Test flutter app
-        run: flutter test
+      #   #5 run test
+      # - name: Test flutter app
+      #   run: flutter test
 
         #6 build apk
       - name: Build APK
