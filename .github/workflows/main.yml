@@ -1,49 +1,74 @@
-name: Flutter CI
+name: Build & Release
 
 on:
-  push:
+  pull_request:
     branches:
       - dev
-  pull_request:
+
+  push:
     branches:
       - dev
 
 jobs:
   build:
-    name: Build and Test
-    runs-on: ubuntu-latest
+    name: Build & Release
+    runs-on: macos-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      # 4. Navigate to the directory containing main.dart
-      - name: Navigate to Example Directory
-        run: cd example/image_classification_mobilenet
+      # 1. Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Set up Flutter
+      # 2. Set up Java
+      - name: Set Up Java
+        uses: actions/setup-java@v3.12.0
+        with:
+          distribution: "oracle"
+          java-version: "20.0.2"
+
+      # 3. Set up Flutter
+      - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.19.1" # You can adjust the Flutter version here
+          flutter-version: "3.19.1"
+          channel: "stable"
 
-      - name: Install dependencies
+      # 4. Navigate to the directory containing main.dart
+      - name: Navigate to Example Directory
+        run: cd examples/image_classification_mobilenet
+
+      # 5. Install dependencies
+      - name: Install Dependencies
         run: flutter pub get
 
-      - name: Run tests
-        run: flutter run
+      # 6. Build APK
+      - name: Build APK
+        run: flutter build apk --release
 
-      # - name: Build Android APK
-      #   run: flutter build apk
+      # 7. Build appBundle
+      - name: Build appBundle
+        run: flutter build appbundle
 
-      # - name: Build iOS app
-      #   run: flutter build ios
-      #   # Note: For iOS builds, you may need to set up additional configurations like signing.
+      # # 8. Build IPA
+      # - name: Build IPA
+      #   run: flutter build ipa --no-codesign
 
-      - name: Archive artifacts
+      # # 9. Compress Archives and IPAs
+      # - name: Compress Archives and IPAs
+      #   run: |
+      #     cd build
+      #     tar -czf ios_build.tar.gz ios
+
+      # 10. Upload Artifacts
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: build
+          name: Releases
           path: |
-            examples/image_classification_mobilenet/build/
+            examples/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk
+            examples/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab
+            examples/image_classification_mobilenet/build/ios_build.tar.gz
+
       # 11. Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
