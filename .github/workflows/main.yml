@@ -1,15 +1,13 @@
-name: "Build & Release"
+name: Build & Release
 
 on:
   pull_request:
     branches:
       - dev
-      # - test
 
   push:
     branches:
       - dev
-      # - test
 
 jobs:
   build:
@@ -17,63 +15,64 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # steps:
-      #1 Checkout repository
+      # 1. Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-        #2 setup java
+      # 2. Set up Java
       - name: Set Up Java
         uses: actions/setup-java@v3.12.0
         with:
           distribution: "oracle"
           java-version: "20.0.2"
 
-        #3 setup Flutter
+      # 3. Set up Flutter
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.19.1"
           channel: "stable"
 
-        #4 install dependencies
+      # 4. Navigate to the directory containing main.dart
+      - name: Navigate to Example Directory
+        run: cd examples/image_classification_mobilenet
+
+      # 5. Install dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-      #   #5 run test
-      # - name: Test flutter app
-      #   run: flutter test
-
-        #6 build apk
+      # 6. Build APK
       - name: Build APK
         run: flutter build apk --release
 
-        #7 build aab
+      # 7. Build appBundle
       - name: Build appBundle
         run: flutter build appbundle
 
-        #8 build ipa
+      # 8. Build IPA
       - name: Build IPA
         run: flutter build ipa --no-codesign
+
+      # 9. Compress Archives and IPAs
       - name: Compress Archives and IPAs
         run: |
           cd build
           tar -czf ios_build.tar.gz ios
 
-        #9 get those build to be available to download
+      # 10. Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: Releases
           path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
-            build/ios_build.tar.gz
+            examples/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk
+            examples/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab
+            examples/image_classification_mobilenet/build/ios_build.tar.gz
 
-        #10 create release with those builds
+      # 11. Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk,build/app/outputs/bundle/release/app-release.aab,build/ios_build.tar.gz"
+          artifacts: "examples/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk,examples/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab,examples/image_classification_mobilenet/build/ios_build.tar.gz"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
