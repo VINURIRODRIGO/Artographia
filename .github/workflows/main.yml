@@ -35,7 +35,7 @@ jobs:
 
       # 4. Navigate to the directory containing main.dart
       - name: Navigate to Example Directory
-        run: cd examples/image_classification_mobilenet
+        run: cd example/image_classification_mobilenet
 
       # 5. Install dependencies
       - name: Install Dependencies
@@ -65,14 +65,14 @@ jobs:
         with:
           name: Releases
           path: |
-            examples/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk
-            examples/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab
-            examples/image_classification_mobilenet/build/ios_build.tar.gz
+            example/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk
+            example/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab
+            example/image_classification_mobilenet/build/ios_build.tar.gz
 
       # 11. Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "examples/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk,examples/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab,examples/image_classification_mobilenet/build/ios_build.tar.gz"
+          artifacts: "example/image_classification_mobilenet/build/app/outputs/flutter-apk/app-release.apk,example/image_classification_mobilenet/build/app/outputs/bundle/release/app-release.aab,example/image_classification_mobilenet/build/ios_build.tar.gz"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
