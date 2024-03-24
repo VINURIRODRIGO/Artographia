@@ -1,23 +1,43 @@
-build-job:
-  stage: build
-  script:
-    - echo "Hello, $GITLAB_USER_LOGIN!"
+name: Flutter CI
 
-test-job1:
-  stage: test
-  script:
-    - echo "This job tests something"
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
 
-test-job2:
-  stage: test
-  script:
-    - echo "This job tests something, but takes more time than test-job1."
-    - echo "After the echo commands complete, it runs the sleep command for 20 seconds"
-    - echo "which simulates a test that runs 20 seconds longer than test-job1"
-    - sleep 20
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
 
-deploy-prod:
-  stage: deploy
-  script:
-    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
-  environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.8.0' # You can adjust the Flutter version here
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build Android APK
+        run: flutter build apk
+
+      - name: Build iOS app
+        run: flutter build ios
+        # Note: For iOS builds, you may need to set up additional configurations like signing.
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: |
+            build/
