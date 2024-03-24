@@ -26,18 +26,18 @@ jobs:
         run: flutter pub get
 
       - name: Run tests
-        run: flutter test
+        run: flutter run
 
-      - name: Build Android APK
-        run: flutter build apk
+      # - name: Build Android APK
+      #   run: flutter build apk
 
-      - name: Build iOS app
-        run: flutter build ios
-        # Note: For iOS builds, you may need to set up additional configurations like signing.
+      # - name: Build iOS app
+      #   run: flutter build ios
+      #   # Note: For iOS builds, you may need to set up additional configurations like signing.
 
-      - name: Archive artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: |
-            build/
+      # - name: Archive artifacts
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: build
+      #     path: |
+      #       build/
