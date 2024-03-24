@@ -20,13 +20,13 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.1' # You can adjust the Flutter version here
+          flutter-version: "3.19.1" # You can adjust the Flutter version here
 
       - name: Install dependencies
-        run: flutter pub get
+        run: cd example/image_classification_mobilenet && flutter pub get
 
       - name: Run tests
-        run: flutter run
+        run: cd example/image_classification_mobilenet && flutter run
 
       # - name: Build Android APK
       #   run: flutter build apk
