@@ -120,7 +120,7 @@ class _EditScreenState extends State<EditScreen> {
           .doc(widget.note!.id.toString())
           .update(noteData)
           .then((value) => {
-                logger.d("DocumentSnapshot successfully updated!"),
+                logger.d("Document Snapshot successfully updated!"),
                 // Navigate back to home page
                 Navigator.pop(context)
               })

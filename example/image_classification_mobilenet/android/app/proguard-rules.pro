@@ -1,0 +1,74 @@
+-verbose
+-keep class androidx.lifecycle.** { *; }
+-keepclassmembernames class androidx.lifecycle.* { *; }
+-keepclassmembers class * implements androidx.lifecycle.LifecycleObserver {
+    <init>(...);
+}
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}
+-keepclassmembers class androidx.lifecycle.Lifecycle$State { *; }
+-keepclassmembers class androidx.lifecycle.Lifecycle$Event { *; }
+-keepclassmembers class * {
+    @androidx.lifecycle.OnLifecycleEvent *;
+}
+
+# https://github.com/flutter/flutter/issues/78625#issuecomment-804164524
+-keep class io.flutter.app.** { *; }
+-keep class io.flutter.plugin.** { *; }
+-keep class io.flutter.util.** { *; }
+-keep class io.flutter.view.** { *; }
+-keep class io.flutter.** { *; }
+-keep class io.flutter.plugins.** { *; }
+-keep class com.google.android.play.core.** { *; }
+-keep class com.google.android.play.core.** { *; }
+-keep class org.tensorflow.lite.** { *; }
+-keep class org.tensorflow.lite.gpu.GpuDelegateFactory$Options { *; }
+
+-keep class com.google.android.play.core.splitcompat.SplitCompatApplication { *; }
+-keep class com.google.android.play.core.splitinstall.SplitInstallException { *; }
+-keep class com.google.android.play.core.splitinstall.SplitInstallManager { *; }
+-keep class com.google.android.play.core.splitinstall.SplitInstallManagerFactory { *; }
+-keep class com.google.android.play.core.splitinstall.SplitInstallRequest$Builder { *; }
+-keep class com.google.android.play.core.splitinstall.SplitInstallRequest { *; }
+-keep class com.google.android.play.core.splitinstall.SplitInstallSessionState { *; }
+-keep class com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener { *; }
+-keep class com.google.android.play.core.tasks.OnFailureListener { *; }
+-keep class com.google.android.play.core.tasks.OnSuccessListener { *; }
+-keep class com.google.android.play.core.tasks.Task { *; }
+
+# This is from iterating over GeneratedPLuginRegistrant.java [
+-keep class dev.fluttercommunity.plus.device_info.** { *; }
+-keepclassmembernames class dev.fluttercommunity.plus.device_info.** { *; }
+-keep class com.mr.flutter.plugin.filepicker.** { *; }
+-keepclassmembernames class com.mr.flutter.plugin.filepicker.** { *; }
+-keep class com.boskokg.flutter_blue_plus.** { *; }
+-keepclassmembernames class com.boskokg.flutter_blue_plus.* { *; }
+-keep class net.wolverinebeach.flutter_timezone.** { *; }
+-keepclassmembernames class net.wolverinebeach.flutter_timezone.* { *; }
+-keep class io.flutter.plugins.flutter_plugin_android_lifecycle.** { *; }
+-keepclassmembernames class io.flutter.plugins.flutter_plugin_android_lifecycle.** { *; }
+-keep class dev.fluttercommunity.plus.packageinfo.** { *; }
+-keepclassmembernames class dev.fluttercommunity.plus.packageinfo.** { *; }
+-keep class io.flutter.plugins.pathprovider.** { *; }
+-keepclassmembernames class io.flutter.plugins.pathprovider.** { *; }
+-keep class com.twwm.share_files_and_screenshot_widgets.** { *; }
+-keepclassmembernames class com.twwm.share_files_and_screenshot_widgets.** { *; }
+-keep class io.flutter.plugins.sharedpreferences.** { *; }
+-keepclassmembernames class io.flutter.plugins.sharedpreferences.** { *; }
+-keep class pl.ukaszapps.soundpool.** { *; }
+-keepclassmembernames class pl.ukaszapps.soundpool.** { *; }
+-keep class com.tekartik.sqflite.** { *; }
+-keepclassmembernames class com.tekartik.sqflite.** { *; }
+-keep class name.avioli.unilinks.** { *; }
+-keepclassmembernames class name.avioli.unilinks.** { *; }
+-keep class io.flutter.plugins.urllauncher.** { *; }
+-keepclassmembernames class io.flutter.plugins.urllauncher.** { *; }
+-keep class dev.fluttercommunity.plus.wakelock.** { *; }
+-keepclassmembernames class dev.fluttercommunity.plus.wakelock.** { *; }
+# ] This is from iterating over GeneratedPLuginRegistrant.java
+
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
+
+-keep class * extends com.google.protobuf.** { *; }
+-keepclassmembernames class * extends com.google.protobuf.** { *; }

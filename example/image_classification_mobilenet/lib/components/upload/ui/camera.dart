@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import '../helper/image_classification_helper.dart';
@@ -35,7 +37,12 @@ class CameraScreenState extends State<CameraScreen>
   bool isLoading = false;
   bool isHealthyButtonSelected = false;
   bool isPatientButtonSelected = false;
-
+  String? uploadedImageFileName;
+    var uploadedImageName = "";
+  final CollectionReference collection =
+      FirebaseFirestore.instance.collection("Report");
+  String comment = "";
+  
   initCamera() {
     cameraController = CameraController(widget.camera, ResolutionPreset.medium,
         imageFormatGroup: Platform.isIOS
@@ -49,8 +56,10 @@ class CameraScreenState extends State<CameraScreen>
     });
   }
 
+
   // Inside CameraScreen class
   Future<void> imageAnalysis(CameraImage cameraImage) async {
+    print("Image FileName : $cameraImage");
     if (_isProcessing) {
       return;
     }
@@ -191,6 +200,88 @@ class CameraScreenState extends State<CameraScreen>
                                       TextButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
+                                          showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return AlertDialog(
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      title:
+                                                                          const Text(
+                                                                        "Report",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                      content:
+                                                                          Column(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.min,
+                                                                        children: [
+                                                                          TextFormField(
+                                                                            maxLength:
+                                                                                150,
+                                                                            onChanged:
+                                                                                (value) {
+                                                                              comment = value;
+                                                                            },
+                                                                            decoration:
+                                                                                InputDecoration(
+                                                                              hintText: "Enter your report comment",
+                                                                              border: OutlineInputBorder(
+                                                                                // Add a border around the text field
+                                                                                borderRadius: BorderRadius.circular(10.0), // Set border radius
+                                                                              ),
+                                                                              focusedBorder: OutlineInputBorder(
+                                                                                // Border when the field is focused
+                                                                                borderRadius: BorderRadius.circular(10.0),
+                                                                                borderSide: const BorderSide(color: Colors.black), // Set border color
+                                                                              ),
+                                                                            ),
+                                                                          ),                                                                          
+                                                                        ],
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center, // Center the buttons horizontally
+                                                                          children: [
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop(); // Close the report dialog
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: Colors.green,
+                                                                              ),
+                                                                              child: const Text(
+                                                                                'Cancel',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(width: 10), // Add some space between the buttons
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                                // reportFeedback();
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: Colors.red,
+                                                                              ),
+                                                                              child: const Text(
+                                                                                'Report',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                );
                                           isPatientButtonSelected = false;
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -309,6 +400,88 @@ class CameraScreenState extends State<CameraScreen>
                                       TextButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
+                                          showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return AlertDialog(
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      title:
+                                                                          const Text(
+                                                                        "Report",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                      content:
+                                                                          Column(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.min,
+                                                                        children: [
+                                                                          TextFormField(
+                                                                            maxLength:
+                                                                                150,
+                                                                            onChanged:
+                                                                                (value) {
+                                                                              comment = value;
+                                                                            },
+                                                                            decoration:
+                                                                                InputDecoration(
+                                                                              hintText: "Enter your report comment",
+                                                                              border: OutlineInputBorder(
+                                                                                // Add a border around the text field
+                                                                                borderRadius: BorderRadius.circular(10.0), // Set border radius
+                                                                              ),
+                                                                              focusedBorder: OutlineInputBorder(
+                                                                                // Border when the field is focused
+                                                                                borderRadius: BorderRadius.circular(10.0),
+                                                                                borderSide: const BorderSide(color: Colors.black), // Set border color
+                                                                              ),
+                                                                            ),
+                                                                          ),                                                                          
+                                                                        ],
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center, // Center the buttons horizontally
+                                                                          children: [
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop(); // Close the report dialog
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: Colors.green,
+                                                                              ),
+                                                                              child: const Text(
+                                                                                'Cancel',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(width: 10), // Add some space between the buttons
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                                // reportFeedback();
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: Colors.red,
+                                                                              ),
+                                                                              child: const Text(
+                                                                                'Report',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                );
                                           isPatientButtonSelected = false;
                                         },
                                         style: ElevatedButton.styleFrom(

@@ -132,8 +132,8 @@ class _MyHomePageState extends State<HomePage> {
                 children: [
                   itemDashboard(
                       'ArtoBot Tutor', CupertinoIcons.book_fill, Colors.brown),
-                  itemDashboard('Documnetation', CupertinoIcons.collections,
-                      Colors.deepOrange),
+                  // itemDashboard('Documnetation', CupertinoIcons.collections,
+                  //     Colors.deepOrange),
                   itemDashboard(
                       'ParkinSpiral', CupertinoIcons.add_circled, Colors.teal),
                   itemDashboard(

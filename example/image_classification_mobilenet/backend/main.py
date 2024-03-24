@@ -12,7 +12,7 @@ app = FastAPI()
 
 class Payload(BaseModel):
     text: str
-
+    print("Received text: $text")
 def clean_text(text):
     # Remove [^(number)^] pattern with numbers
     cleaned_text = re.sub(r'\[\^\d+\^\]', '', text)
@@ -35,21 +35,26 @@ def clean_text(text):
 
 @app.post('/get-response')
 async def get_response(payload: Payload):
+    print("Received payload:", payload)
     bot = None
     question = payload.text
     try:
         cookies = json.loads(open(
-            str(Path(str(Path.cwd()) + "/backend/bing_cookies.json")), encoding="utf-8").read())
+            str(Path(str(Path.cwd()) + "/bing_cookies.json")), encoding="utf-8").read())
+        print("Loaded cookies:", cookies)
         bot = await Chatbot.create(cookies=cookies)
+        print("Bot created successfully")
         response = await bot.ask(
             prompt=question,
             conversation_style=ConversationStyle.balanced,
             simplify_response=True
         )
-        # If you are using non ascii char you need set ensure_ascii=False
+        print("Got response:", response)
+        # If you are using non-ascii characters, you need to set ensure_ascii=False
         print(json.dumps(response, indent=2, ensure_ascii=True))
         assert response
     except Exception as error:
+        print("Error:", error)
         raise error
    
     data = response['text']

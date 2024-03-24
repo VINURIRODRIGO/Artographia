@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import '../helper/image_classification_helper.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class GalleryScreen extends StatefulWidget {
   const GalleryScreen({Key? key}) : super(key: key);
@@ -28,6 +30,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
   var userAnswer = "";
   var feedback = "Wrong";
   List<Widget> contentWidgets = [];
+  var uploadedImageName = "";
+  final CollectionReference collection =
+      FirebaseFirestore.instance.collection("Report");
+  String comment = "";
 
   @override
   void initState() {
@@ -44,6 +50,45 @@ class _GalleryScreenState extends State<GalleryScreen> {
     setState(() {});
   }
 
+  Future<void> reportFeedback() async {
+
+     String uploadedImageName = "";
+
+  if (imagePath != null) {
+    print("ImagePath: $imagePath");
+    uploadedImageName = imagePath!.split('/').last;
+    File imageFile = File(imagePath!);
+    Reference storageRef = FirebaseStorage.instance.ref();
+    Reference imagesRef = storageRef.child("images");
+    Reference spaceRef = imagesRef.child(uploadedImageName);
+    await spaceRef.putFile(imageFile);
+    String imageUrl = await spaceRef.getDownloadURL();
+    
+    // Save data to Firestore with image
+    await FirebaseFirestore.instance.collection('Report').add({
+      'image': imageUrl,
+      'comments': comment,
+      'userPredictResults': userAnswer,
+    }).then((DocumentReference docRef) {
+      // Update document with its ID
+      docRef.update({'id': docRef.id});
+    }).catchError((error) {
+      print("Failed to add report: $error");
+    });
+  } else {
+    // Save data to Firestore without image
+    await FirebaseFirestore.instance.collection('Report').add({
+      'comments': comment,
+      'userPredictResults': userAnswer,
+    }).then((DocumentReference docRef) {
+      // Update document with its ID
+      docRef.update({'id': docRef.id});
+    }).catchError((error) {
+      print("Failed to add report: $error");
+    });
+  }
+  }
+
   // Inside GalleryScreen class
   Future<void> processImage() async {
     setState(() {
@@ -52,6 +97,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       isPatientButtonSelected = false;
     });
     if (imagePath != null) {
+       
       final imageData = File(imagePath!).readAsBytesSync();
       image = img.decodeImage(imageData);
       setState(() {});
@@ -59,7 +105,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
       setState(() {});
       showButtons = true; // Set showButtons to true when image is processed
     }
-    // Set isLoading to false to indicate that image processing is complete
     setState(() {
       isLoading = false;
     });
@@ -133,7 +178,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black, // Set text color to white
+                          color: Colors.black, 
                         ),
                       ),
                     ),
@@ -265,9 +310,89 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                                               onPressed: () {
                                                                 Navigator.of(
                                                                         context)
-                                                                    .pop();
-                                                                isPatientButtonSelected =
-                                                                    false;
+                                                                    .pop(); 
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return AlertDialog(
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      title:
+                                                                          const Text(
+                                                                        "Report",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                      content:
+                                                                          Column(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.min,
+                                                                        children: [
+                                                                          TextFormField(
+                                                                            maxLength:
+                                                                                150,
+                                                                            onChanged:
+                                                                                (value) {
+                                                                              comment = value;
+                                                                            },
+                                                                            decoration:
+                                                                                InputDecoration(
+                                                                              hintText: "Enter your report comment",
+                                                                              border: OutlineInputBorder(
+                                                                                // Add a border around the text field
+                                                                                borderRadius: BorderRadius.circular(10.0), // Set border radius
+                                                                              ),
+                                                                              focusedBorder: OutlineInputBorder(
+                                                                                // Border when the field is focused
+                                                                                borderRadius: BorderRadius.circular(10.0),
+                                                                                borderSide: const BorderSide(color: Colors.black), // Set border color
+                                                                              ),
+                                                                            ),
+                                                                          ),                                                                          
+                                                                        ],
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center, // Center the buttons horizontally
+                                                                          children: [
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop(); // Close the report dialog
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: Colors.green,
+                                                                              ),
+                                                                              child: const Text(
+                                                                                'Cancel',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(width: 10), // Add some space between the buttons
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                                reportFeedback();
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: Colors.red,
+                                                                              ),
+                                                                              child: const Text(
+                                                                                'Report',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                );
                                                               },
                                                               style: ElevatedButton
                                                                   .styleFrom(
@@ -440,6 +565,88 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                                                 Navigator.of(
                                                                         context)
                                                                     .pop();
+                                                                    showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return AlertDialog(
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      title:
+                                                                          const Text(
+                                                                        "Report",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.black),
+                                                                      ),
+                                                                      content:
+                                                                          Column(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.min,
+                                                                        children: [
+                                                                          TextFormField(
+                                                                            maxLength:
+                                                                                150,
+                                                                            onChanged:
+                                                                                (value) {
+                                                                              comment = value;
+                                                                            },
+                                                                            decoration:
+                                                                                InputDecoration(
+                                                                              hintText: "Enter your report comment",
+                                                                              border: OutlineInputBorder(
+                                                                                // Add a border around the text field
+                                                                                borderRadius: BorderRadius.circular(10.0), // Set border radius
+                                                                              ),
+                                                                              focusedBorder: OutlineInputBorder(
+                                                                                // Border when the field is focused
+                                                                                borderRadius: BorderRadius.circular(10.0),
+                                                                                borderSide: const BorderSide(color: Colors.black), // Set border color
+                                                                              ),
+                                                                            ),
+                                                                          ),                                                                          
+                                                                        ],
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center, // Center the buttons horizontally
+                                                                          children: [
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop(); // Close the report dialog
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: Colors.green,
+                                                                              ),
+                                                                              child: const Text(
+                                                                                'Cancel',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(width: 10), // Add some space between the buttons
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                                reportFeedback();
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(
+                                                                                backgroundColor: Colors.red,
+                                                                              ),
+                                                                              child: const Text(
+                                                                                'Report',
+                                                                                style: TextStyle(color: Colors.white),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                );
                                                                 isPatientButtonSelected =
                                                                     false;
                                                               },
@@ -518,8 +725,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                           ),
                                           child: const Text(
                                             'Patient',
-                                            style:
-                                                TextStyle(color: Colors.white,fontSize: 16,),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                            ),
                                           ),
                                         ),
                                       ],
