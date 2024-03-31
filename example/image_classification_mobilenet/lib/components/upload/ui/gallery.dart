@@ -51,42 +51,41 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Future<void> reportFeedback() async {
+    String uploadedImageName = "";
 
-     String uploadedImageName = "";
+    if (imagePath != null) {
+      print("ImagePath: $imagePath");
+      uploadedImageName = imagePath!.split('/').last;
+      File imageFile = File(imagePath!);
+      Reference storageRef = FirebaseStorage.instance.ref();
+      Reference imagesRef = storageRef.child("images");
+      Reference spaceRef = imagesRef.child(uploadedImageName);
+      await spaceRef.putFile(imageFile);
+      String imageUrl = await spaceRef.getDownloadURL();
 
-  if (imagePath != null) {
-    print("ImagePath: $imagePath");
-    uploadedImageName = imagePath!.split('/').last;
-    File imageFile = File(imagePath!);
-    Reference storageRef = FirebaseStorage.instance.ref();
-    Reference imagesRef = storageRef.child("images");
-    Reference spaceRef = imagesRef.child(uploadedImageName);
-    await spaceRef.putFile(imageFile);
-    String imageUrl = await spaceRef.getDownloadURL();
-    
-    // Save data to Firestore with image
-    await FirebaseFirestore.instance.collection('Report').add({
-      'image': imageUrl,
-      'comments': comment,
-      'userPredictResults': userAnswer,
-    }).then((DocumentReference docRef) {
-      // Update document with its ID
-      docRef.update({'id': docRef.id});
-    }).catchError((error) {
-      print("Failed to add report: $error");
-    });
-  } else {
-    // Save data to Firestore without image
-    await FirebaseFirestore.instance.collection('Report').add({
-      'comments': comment,
-      'userPredictResults': userAnswer,
-    }).then((DocumentReference docRef) {
-      // Update document with its ID
-      docRef.update({'id': docRef.id});
-    }).catchError((error) {
-      print("Failed to add report: $error");
-    });
-  }
+      // Save data to Firestore with image
+      await FirebaseFirestore.instance.collection('Report').add({
+        'image': imageUrl,
+        'comments': comment,
+        'userPredictResults': userAnswer,
+      }).then((DocumentReference docRef) {
+        // Update document with its ID
+        docRef.update({'id': docRef.id});
+      }).catchError((error) {
+        print("Failed to add report: $error");
+      });
+    } else {
+      // Save data to Firestore without image
+      await FirebaseFirestore.instance.collection('Report').add({
+        'comments': comment,
+        'userPredictResults': userAnswer,
+      }).then((DocumentReference docRef) {
+        // Update document with its ID
+        docRef.update({'id': docRef.id});
+      }).catchError((error) {
+        print("Failed to add report: $error");
+      });
+    }
   }
 
   // Inside GalleryScreen class
@@ -96,19 +95,47 @@ class _GalleryScreenState extends State<GalleryScreen> {
       isHealthyButtonSelected = false;
       isPatientButtonSelected = false;
     });
-    if (imagePath != null) {
-       
-      final imageData = File(imagePath!).readAsBytesSync();
-      image = img.decodeImage(imageData);
-      setState(() {});
-      classification = await imageClassificationHelper?.inferenceImage(image!);
-      setState(() {});
-      showButtons = true; // Set showButtons to true when image is processed
-    }
+
+    final XFile? pickedFile = await imagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (pickedFile != null) {
+      // Check the file extension of the picked image
+      if (pickedFile.path.endsWith('.jpg') ||
+          pickedFile.path.endsWith('.png') ||
+          pickedFile.path.endsWith('.jpeg')) {
+        imagePath = pickedFile.path;
+        final imageData = File(imagePath!).readAsBytesSync();
+        image = img.decodeImage(imageData);
+        setState(() {});
+        classification = await imageClassificationHelper?.inferenceImage(image!);
+        setState(() {});
+        showButtons = true; // Set showButtons to true when image is processed
+            }
     setState(() {
       isLoading = false;
     });
-  }
+        showButtons = true; // Set showButtons to true when image is processed
+      } else {
+        // Display an error message if the selected file extension is not allowed
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Invalid File'),
+              content: const Text('Please select a .jpg, .png, or .jpeg file.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
 
   @override
   void dispose() {
@@ -178,7 +205,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black, 
+                          color: Colors.black,
                         ),
                       ),
                     ),
@@ -310,7 +337,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                                               onPressed: () {
                                                                 Navigator.of(
                                                                         context)
-                                                                    .pop(); 
+                                                                    .pop();
                                                                 showDialog(
                                                                   context:
                                                                       context,
@@ -353,7 +380,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                                                                 borderSide: const BorderSide(color: Colors.black), // Set border color
                                                                               ),
                                                                             ),
-                                                                          ),                                                                          
+                                                                          ),
                                                                         ],
                                                                       ),
                                                                       actions: <Widget>[
@@ -565,7 +592,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                                                 Navigator.of(
                                                                         context)
                                                                     .pop();
-                                                                    showDialog(
+                                                                showDialog(
                                                                   context:
                                                                       context,
                                                                   builder:
@@ -607,7 +634,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                                                                 borderSide: const BorderSide(color: Colors.black), // Set border color
                                                                               ),
                                                                             ),
-                                                                          ),                                                                          
+                                                                          ),
                                                                         ],
                                                                       ),
                                                                       actions: <Widget>[

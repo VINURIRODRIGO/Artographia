@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_classification_mobilenet/pages/upload_page.dart';
 
+import '../components/instructions/instructions.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   void signUserOut() {
@@ -96,7 +98,7 @@ class _MyHomePageState extends State<HomePage> {
                           .textTheme
                           .headlineSmall
                           ?.copyWith(color: Colors.white)),
-                  subtitle: Text('Good Morning',
+                  subtitle: Text('Welcome to Artographia!',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
@@ -138,6 +140,8 @@ class _MyHomePageState extends State<HomePage> {
                       'ParkinSpiral', CupertinoIcons.add_circled, Colors.teal),
                   itemDashboard(
                       'Notes', CupertinoIcons.question_circle, Colors.blue),
+                  itemDashboard(
+                      'Instructions', CupertinoIcons.question_circle, const Color.fromARGB(255, 225, 132, 125)),    
                 ],
               ),
             ),
@@ -170,6 +174,16 @@ class _MyHomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ChatScreen()),
+          );
+        },
+        child: _buildDashboardItem(title, iconData, background),
+      );
+    } else if (title == 'Instructions') {
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const InstructionsScreen()),
           );
         },
         child: _buildDashboardItem(title, iconData, background),
