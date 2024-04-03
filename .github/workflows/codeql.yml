@@ -21,9 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - language: dart
-            build-mode: none
+       language: ['dart'] 
 
     steps:
       - name: Checkout repository
