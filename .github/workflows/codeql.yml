@@ -43,7 +43,7 @@ jobs:
         if: matrix.language == 'java-kotlin'
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: '3.19.1' # Specify the Flutter version here
 
       - name: Build Code (Java-Kotlin)
         if: matrix.language == 'java-kotlin'
