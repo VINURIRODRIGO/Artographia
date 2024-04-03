@@ -42,8 +42,7 @@ jobs:
       - name: Build Code (C/C++)
         if: matrix.language == 'c-cpp'
         run: |
-          # Replace these commands with your custom build steps for C/C++ code
-          make clean
+          # Replace this command with your custom build command for C/C++ code
           make
 
       - name: Perform CodeQL Analysis
