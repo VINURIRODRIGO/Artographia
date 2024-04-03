@@ -45,15 +45,6 @@ class _MyHomePageState extends State<HomePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Profile'),
-              onTap: () {
-                // Navigate to profile screen
-                // You can implement this based on your navigation setup
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Sign Out'),
               onTap: () {
@@ -139,9 +130,7 @@ class _MyHomePageState extends State<HomePage> {
                   itemDashboard(
                       'ParkinSpiral', CupertinoIcons.add_circled, Colors.teal),
                   itemDashboard(
-                      'Notes', CupertinoIcons.question_circle, Colors.blue),
-                  itemDashboard(
-                      'Instructions', CupertinoIcons.question_circle, const Color.fromARGB(255, 225, 132, 125)),    
+                      'Notes', CupertinoIcons.question_circle, Colors.blue),                  
                 ],
               ),
             ),
@@ -174,16 +163,6 @@ class _MyHomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ChatScreen()),
-          );
-        },
-        child: _buildDashboardItem(title, iconData, background),
-      );
-    } else if (title == 'Instructions') {
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const InstructionsScreen()),
           );
         },
         child: _buildDashboardItem(title, iconData, background),

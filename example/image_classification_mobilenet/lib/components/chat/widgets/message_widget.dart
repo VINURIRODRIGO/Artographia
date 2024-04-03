@@ -9,14 +9,13 @@ class MessageWidget extends StatefulWidget {
   final String text;
   final bool fromAi;
 
-  const MessageWidget({Key? key, required this.text, this.fromAi = false})
-      : super(key: key);
+  const MessageWidget({super.key, required this.text, this.fromAi = false});
 
-  @override
-  _MessageWidgetState createState() => _MessageWidgetState();
+   @override
+  State<MessageWidget> createState() => MessageWidgetState();
 }
 
-class _MessageWidgetState extends State<MessageWidget> {
+class MessageWidgetState extends State<MessageWidget> {
   final Logger logger = Logger();
   bool isCopied = false;
 

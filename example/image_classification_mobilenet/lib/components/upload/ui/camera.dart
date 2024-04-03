@@ -58,7 +58,6 @@ class CameraScreenState extends State<CameraScreen>
 
   // Inside CameraScreen class
   Future<void> imageAnalysis(CameraImage cameraImage) async {
-    print("Image FileName : $cameraImage");
     if (_isProcessing) {
       return;
     }

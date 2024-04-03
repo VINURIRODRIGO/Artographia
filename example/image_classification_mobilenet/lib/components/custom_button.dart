@@ -5,10 +5,10 @@ class CustomButton extends StatelessWidget {
   final String text;
   
   const CustomButton({
-    Key? key, 
+    super.key, 
     required this.onTap, 
     required this.text
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,6 @@ void main() {
       body: Center(
         child: CustomButton(
           onTap: () {
-            print('Button tapped');
           },
           text: 'Click Me',
         ),

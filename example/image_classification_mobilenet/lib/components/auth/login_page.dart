@@ -1,8 +1,8 @@
 import 'package:image_classification_mobilenet/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../customButton.dart';
-import '../customTextField.dart';
+import '../custom_button.dart';
+import '../custom_text_field.dart';
 import '../square_tile.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 
@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
               color: Colors.grey,
             ),
             title: Text(
-              '$errorMessage',
+              errorMessage,
               style: const TextStyle(color: Colors.black),
             ),
             content: Row(

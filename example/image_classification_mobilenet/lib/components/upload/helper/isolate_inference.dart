@@ -40,18 +40,14 @@ class IsolateInference {
     var classification = <String, double>{};
     if (isolateModel.isCameraFrame()) {
       img = ImageUtils.convertCameraImage(isolateModel.cameraImage!);
-      print('Received camera frame.');
     } else {
       img = isolateModel.image;
-      print('Received still image.');
     }
     
-    // Print image size and name
-    print('Image width: ${img!.width}, height: ${img.height}');
     
     // Resize original image to match model shape.
     image_lib.Image imageInput = image_lib.copyResize(
-      img,
+      img!,
       width: isolateModel.inputShape[1],
       height: isolateModel.inputShape[2],
     );
@@ -61,7 +57,6 @@ class IsolateInference {
     }
 
     // Print resized image size
-    print('Resized image width: ${imageInput.width}, height: ${imageInput.height}');
 
     // Convert image to matrix
     final imageMatrix = List.generate(
@@ -93,7 +88,6 @@ class IsolateInference {
         // Set label and score in classification map
         classification[customLabels[i]] = score;
       }
-    print(classification);
     isolateModel.responsePort.send(classification);
   }
 }

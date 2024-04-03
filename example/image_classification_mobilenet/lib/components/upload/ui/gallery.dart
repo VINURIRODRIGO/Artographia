@@ -26,6 +26,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   bool isLoading = false;
   bool isHealthyButtonSelected = false;
   bool isPatientButtonSelected = false;
+  
   var modelAnswer = "";
   var userAnswer = "";
   var feedback = "Wrong";
@@ -54,7 +55,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
     String uploadedImageName = "";
 
     if (imagePath != null) {
-      print("ImagePath: $imagePath");
       uploadedImageName = imagePath!.split('/').last;
       File imageFile = File(imagePath!);
       Reference storageRef = FirebaseStorage.instance.ref();
@@ -72,7 +72,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         // Update document with its ID
         docRef.update({'id': docRef.id});
       }).catchError((error) {
-        print("Failed to add report: $error");
+        logger;
       });
     } else {
       // Save data to Firestore without image
@@ -83,7 +83,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         // Update document with its ID
         docRef.update({'id': docRef.id});
       }).catchError((error) {
-        print("Failed to add report: $error");
+        logger;
       });
     }
   }
@@ -109,33 +109,45 @@ class _GalleryScreenState extends State<GalleryScreen> {
         final imageData = File(imagePath!).readAsBytesSync();
         image = img.decodeImage(imageData);
         setState(() {});
-        classification = await imageClassificationHelper?.inferenceImage(image!);
+        classification =
+            await imageClassificationHelper?.inferenceImage(image!);
         setState(() {});
         showButtons = true; // Set showButtons to true when image is processed
-            }
-    setState(() {
-      isLoading = false;
-    });
-        showButtons = true; // Set showButtons to true when image is processed
-      } else {
-        // Display an error message if the selected file extension is not allowed
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Invalid File'),
-              content: const Text('Please select a .jpg, .png, or .jpeg file.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        );
       }
+      setState(() {
+        isLoading = false;
+      });
+      showButtons = true; // Set showButtons to true when image is processed
+    } else {
+      // Display an error message if the selected file extension is not allowed
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Invalid File'),
+            content: const Text('Please select a .jpg, .png, or .jpeg file.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    isLoading = false; // Set isLoading to false
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  "OK",
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+              ),
+            ],
+          );
+        },
+      );
     }
+  }
 
   @override
   void dispose() {
