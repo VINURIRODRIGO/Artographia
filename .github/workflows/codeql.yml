@@ -37,18 +37,6 @@ jobs:
           languages: 'java, python' # Specify only the relevant languages here
           build-mode: ${{ matrix.build-mode }}
 
-      - name: Set up Flutter
-        if: matrix.language == 'java-kotlin'
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.1' # Specify the Flutter version here
-
-      - name: Build Code (Java-Kotlin)
-        if: matrix.language == 'java-kotlin'
-        run: |
-          cd ${{ github.workspace }}/example/image_classification_mobilenet
-          flutter pub get
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
