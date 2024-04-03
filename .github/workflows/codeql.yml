@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-       language: ['dart'] 
+        language: ['dart']
 
     steps:
       - name: Checkout repository
@@ -39,10 +39,11 @@ jobs:
         with:
           flutter-version: '3.19.1'
 
-      - name: Install dependencies
-        run: cd example/image_classification_mobilenet && flutter pub get
+      - name: Install dependencies (with error handling)
+        run: |
+          cd example/image_classification_mobilenet && flutter pub get || (echo "Failed to install dependencies" && exit 1)
 
-      # - name: Build Android app
+      # - name: Build Android app (uncomment if needed)
       #   run: cd example/image_classification_mobilenet && flutter build apk
 
       # Perform CodeQL Analysis
