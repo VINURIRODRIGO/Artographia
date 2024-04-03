@@ -23,7 +23,7 @@ jobs:
       matrix:
         include:
           - language: c-cpp
-            build-mode: manual
+            build-mode: autobuild
           - language: java-kotlin
             build-mode: autobuild
           - language: python
@@ -39,8 +39,8 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - name: Build Code (C/C++)
-        if: matrix.language == 'c-cpp'
+      - name: Build Code (Java-Kotlin)
+        if: matrix.language == 'java-kotlin'
         run: cd ${{ github.workspace }}/example/image_classification_mobilenet
           flutter pub get
 
