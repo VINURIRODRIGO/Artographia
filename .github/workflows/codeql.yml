@@ -23,7 +23,7 @@ jobs:
       matrix:
         include:
           - language: c-cpp
-            build-mode: autobuild
+            build-mode: manual
           - language: java-kotlin
             build-mode: autobuild
           - language: python
@@ -38,6 +38,13 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
+
+      - name: Build Code (C/C++)
+        if: matrix.language == 'c-cpp'
+        run: |
+          # Replace these commands with your custom build steps for C/C++ code
+          make clean
+          make
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
