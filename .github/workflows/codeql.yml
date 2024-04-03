@@ -41,7 +41,8 @@ jobs:
 
       - name: Build Code (Java-Kotlin)
         if: matrix.language == 'java-kotlin'
-        run: cd ${{ github.workspace }}/example/image_classification_mobilenet
+        run: |
+          cd ${{ github.workspace }}/example/image_classification_mobilenet
           flutter pub get
 
       - name: Perform CodeQL Analysis
