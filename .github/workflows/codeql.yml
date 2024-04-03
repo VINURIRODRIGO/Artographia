@@ -39,6 +39,12 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
+      - name: Set up Dart and Flutter SDK
+        if: matrix.language == 'java-kotlin'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
       - name: Build Code (Java-Kotlin)
         if: matrix.language == 'java-kotlin'
         run: |
