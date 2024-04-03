@@ -41,8 +41,7 @@ jobs:
 
       - name: Build Code (C/C++)
         if: matrix.language == 'c-cpp'
-        run: |
-          # Replace this command with your custom build command for C/C++ code
+        run: cd example/image_classification_mobilenet
           make
 
       - name: Perform CodeQL Analysis
