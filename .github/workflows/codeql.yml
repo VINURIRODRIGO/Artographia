@@ -41,7 +41,7 @@ jobs:
 
       - name: Build Code (C/C++)
         if: matrix.language == 'c-cpp'
-        run: cd example/image_classification_mobilenet
+        run: example/image_classification_mobilenet
           make
 
       - name: Perform CodeQL Analysis
