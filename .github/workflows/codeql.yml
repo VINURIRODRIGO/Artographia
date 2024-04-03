@@ -3,51 +3,30 @@ name: "CodeQL"
 on:
   push:
     branches: [ "dev" ]
-  pull_request:
-    branches: [ "dev" ]
   schedule:
     - cron: '45 21 * * 3'
 
 jobs:
   analyze:
-    name: Analyze (${{ matrix.language }})
+    name: Analyze
     runs-on: ubuntu-latest
-    timeout-minutes: 360
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
 
     strategy:
       fail-fast: false
       matrix:
-        language: ['dart']
+        language: [ 'python', 'javascript' ]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
 
-      # Set up Flutter dependencies and build the Android app
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.1'
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
 
-      - name: Install dependencies (with error handling)
-        run: |
-          cd example/image_classification_mobilenet && flutter pub get || (echo "Failed to install dependencies" && exit 1)
-
-      # - name: Build Android app (uncomment if needed)
-      #   run: cd example/image_classification_mobilenet && flutter build apk
-
-      # Perform CodeQL Analysis
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{ matrix.language }}"
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
