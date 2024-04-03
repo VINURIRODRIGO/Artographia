@@ -41,8 +41,8 @@ jobs:
 
       - name: Build Code (C/C++)
         if: matrix.language == 'c-cpp'
-        run: example/image_classification_mobilenet
-          make
+        run: cd ${{ github.workspace }}/example/image_classification_mobilenet
+          flutter pub get
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
